@@ -1,0 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+group = 'com.github.jarod'
+version = '0.1'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+   testCompile(
+     "junit:junit:4.10",
+   )
+}
+

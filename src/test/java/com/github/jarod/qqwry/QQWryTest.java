@@ -4,15 +4,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class QQWryTest {
-	private QQWry qqwry;
+	private QQWryFactory factory;
 
 	@Before
 	public void setUp() throws Exception {
-		qqwry = new QQWry("qqwry.dat");
+		factory = new DefaultQQWryFactory("qqwry.dat");
 	}
 
 	@Test
 	public void testFindIP() throws Exception {
+		QQWry qqwry = factory.getInstance();
 		for (int a = 0; a <= 255; a++) {
 			for (int b = 0; b <= 255; b++) {
 				for (int c = 0; c <= 255; c++) {

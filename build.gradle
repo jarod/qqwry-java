@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
 group = 'com.github.jarod'
-version = '0.1'
+version = '0.2'
 
 repositories {
   mavenCentral()

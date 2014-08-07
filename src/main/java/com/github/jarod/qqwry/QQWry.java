@@ -1,26 +1,23 @@
 package com.github.jarod.qqwry;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Not thread safe. Each instance should only use in one thread.
+ * @author Jarod Liu <liuyuanzhi@gmail.com>
+ */
 public class QQWry {
-	private byte[] data;
+	private static final int IP_RECORD_LENGTH = 7;
+	private static final byte STRING_END = '\0';
+	
+	private final byte[] data;
 	private final long indexHead;
 	private final long indexTail;
+	private final byte[] stringBuf = new byte[64];
 
-	private static final byte STRING_END = '\0';
-	private final byte[] STRING_BUF = new byte[64];
 
-	private static final int IP_RECORD_LENGTH = 7;
-
-	public QQWry(final String filename) throws IOException {
-		try (BufferedInputStream in = new BufferedInputStream(
-				new FileInputStream(filename), 1024 * 1024 * 10)) {
-			data = new byte[in.available()];
-			in.read(data);
-		}
+	public QQWry(final byte[] data) {
+		this.data = data;
 		indexHead = readLong32(0);
 		indexTail = readLong32(4);
 	}
@@ -74,7 +71,7 @@ public class QQWry {
 	private IPZone readIP(final String ip, final QIndex idx) {
 		final int mode = data[idx.getRecordOffset() + 4];
 		final IPZone z = new IPZone(ip);
-		System.out.print("mode=" + mode + " ");
+		//System.out.print("mode=" + mode + " ");
 		if (mode == 0x01) {
 			final int offset = readInt24(idx.getRecordOffset() + 5);
 			if (data[offset] == 0x02) {
@@ -114,10 +111,10 @@ public class QQWry {
 			if (STRING_END == b) {
 				break;
 			}
-			STRING_BUF[i] = b;
+			stringBuf[i] = b;
 		}
 		try {
-			return new WryString(new String(STRING_BUF, 0, i, "GB18030"), i);
+			return new WryString(new String(stringBuf, 0, i, "GB18030"), i);
 		} catch (final UnsupportedEncodingException e) {
 			return new WryString("", 0);
 		}

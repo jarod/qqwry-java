@@ -32,8 +32,8 @@ public class IPZone {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("IPZone [ip=").append(ip).append(", country=")
-				.append(country).append(", city=").append(city).append("]");
+		builder.append("IPZone [ip=").append(ip).append(", country=").append(country).append(", city=").append(city)
+		.append("]");
 		return builder.toString();
 	}
 

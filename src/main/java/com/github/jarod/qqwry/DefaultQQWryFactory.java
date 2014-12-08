@@ -8,6 +8,13 @@ public class DefaultQQWryFactory extends QQWryFactory {
 		super(filename);
 	}
 
+	/**
+	 * Load qqwry.dat from classpath
+	 */
+	public DefaultQQWryFactory() throws IOException {
+		super();
+	}
+
 	@Override
 	public QQWry getInstance() {
 		return new QQWry(getData());

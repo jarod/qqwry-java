@@ -9,12 +9,11 @@ import java.io.UnsupportedEncodingException;
 public class QQWry {
 	private static final int IP_RECORD_LENGTH = 7;
 	private static final byte STRING_END = '\0';
-	
+
 	private final byte[] data;
 	private final long indexHead;
 	private final long indexTail;
 	private final byte[] stringBuf = new byte[64];
-
 
 	public QQWry(final byte[] data) {
 		this.data = data;

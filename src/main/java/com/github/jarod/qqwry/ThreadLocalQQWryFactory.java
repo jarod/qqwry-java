@@ -14,6 +14,13 @@ public class ThreadLocalQQWryFactory extends QQWryFactory {
 		super(filename);
 	}
 
+	/**
+	 * Load qqwry.dat from classpath
+	 */
+	public ThreadLocalQQWryFactory() throws IOException {
+		super();
+	}
+
 	@Override
 	public QQWry getInstance() {
 		return instances.get();

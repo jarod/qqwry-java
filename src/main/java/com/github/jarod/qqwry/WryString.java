@@ -9,6 +9,7 @@ public class WryString {
 		this.length = length;
 	}
 
+	/** length including the \0 end byte */
 	public int getLength() {
 		return length;
 	}

@@ -2,8 +2,8 @@ package com.github.jarod.qqwry;
 
 public class IPZone {
 	private final String ip;
-	private String country;
-	private String city;
+	private String country = "";
+	private String city = "";
 
 	public IPZone(final String ip) {
 		this.ip = ip;
@@ -32,8 +32,7 @@ public class IPZone {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("IPZone [ip=").append(ip).append(", country=").append(country).append(", city=").append(city)
-		.append("]");
+		builder.append(country).append(" ").append(city);
 		return builder.toString();
 	}
 

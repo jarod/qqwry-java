@@ -1,5 +1,7 @@
 package com.github.jarod.qqwry;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,26 +10,38 @@ public class QQWryTest {
 
 	@Before
 	public void setUp() throws Exception {
-		factory = new DefaultQQWryFactory("qqwry.dat");
+		factory = new DefaultQQWryFactory();
 	}
 
 	@Test
-	public void testFindIP() throws Exception {
+	public void testDirectMode() throws Exception {
 		final QQWry qqwry = factory.getInstance();
-		for (int a = 0; a <= 255; a++) {
-			for (int b = 0; b <= 255; b++) {
-				for (int c = 0; c <= 255; c++) {
-					for (int d = 0; d <= 255; d++) {
-						final String ipstr = String.format("%d.%d.%d.%d", a, b, c, d);
-						final IPZone zone = qqwry.findIP(ipstr);
-						if (zone.getCountry() != null) {
-							System.out.println(zone);
-						}
-						Thread.yield();
-					}
-				}
-			}
-		}
+		final IPZone zone = qqwry.findIP("42.86.131.35");
+		assertEquals("辽宁省铁岭市", zone.getCountry());
+		assertEquals("联通", zone.getCity());
 	}
 
+	@Test
+	public void testRedirectMode1() {
+		final QQWry qqwry = factory.getInstance();
+		final IPZone zone = qqwry.findIP("115.199.185.246");
+		assertEquals("浙江省杭州市", zone.getCountry());
+		assertEquals("电信", zone.getCity());
+	}
+
+	@Test
+	public void testRedirectMode2() {
+		final QQWry qqwry = factory.getInstance();
+		final IPZone zone = qqwry.findIP("111.5.126.139");
+		assertEquals("河南省郑州市", zone.getCountry());
+		assertEquals("移动", zone.getCity());
+	}
+
+	@Test
+	public void testRedirectMode1Mode2() {
+		final QQWry qqwry = factory.getInstance();
+		final IPZone zone = qqwry.findIP("113.64.230.49");
+		assertEquals("广东省广州市", zone.getCountry());
+		assertEquals("电信", zone.getCity());
+	}
 }

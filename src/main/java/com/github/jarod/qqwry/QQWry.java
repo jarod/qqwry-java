@@ -7,8 +7,10 @@ import java.io.UnsupportedEncodingException;
  * @author Jarod Liu <liuyuanzhi@gmail.com>
  */
 public class QQWry {
-	private static final int IP_RECORD_LENGTH = 7;
+	private static final int INDEX_RECORD_LENGTH = 7;
 	private static final byte STRING_END = '\0';
+	private static final byte REDIRECT_MODE_1 = 0x01;
+	private static final byte REDIRECT_MODE_2 = 0x02;
 
 	private final byte[] data;
 	private final long indexHead;
@@ -25,23 +27,23 @@ public class QQWry {
 		final long ipNum = toNumericIP(ip);
 		final QIndex idx = searchIndex(ipNum);
 		if (idx == null) {
-			return null;
+			return new IPZone(ip);
 		}
 		return readIP(ip, idx);
 	}
 
 	private long getMiddleOffset(final long begin, final long end) {
-		long records = (end - begin) / IP_RECORD_LENGTH;
+		long records = (end - begin) / INDEX_RECORD_LENGTH;
 		records >>= 1;
 		if (records == 0) {
 			records = 1;
 		}
-		return begin + (records * IP_RECORD_LENGTH);
+		return begin + (records * INDEX_RECORD_LENGTH);
 	}
 
 	private String readCity(final int offset) {
 		final byte b = data[offset];
-		if ((b == 0x01) || (b == 0x02)) {
+		if ((b == REDIRECT_MODE_1) || (b == REDIRECT_MODE_2)) {
 			final int areaOffset = readInt24(offset + 1);
 			if (areaOffset == 0) {
 				return "";
@@ -68,12 +70,12 @@ public class QQWry {
 	}
 
 	private IPZone readIP(final String ip, final QIndex idx) {
-		final int mode = data[idx.getRecordOffset() + 4];
+		final int pos = idx.getRecordOffset() + 4; // skip ip
+		final byte mode = data[pos];
 		final IPZone z = new IPZone(ip);
-		//System.out.print("mode=" + mode + " ");
-		if (mode == 0x01) {
-			final int offset = readInt24(idx.getRecordOffset() + 5);
-			if (data[offset] == 0x02) {
+		if (mode == REDIRECT_MODE_1) {
+			final int offset = readInt24(pos + 1);
+			if (data[offset] == REDIRECT_MODE_2) {
 				readMode2(z, offset);
 			} else {
 				final WryString country = readString(offset);
@@ -81,17 +83,22 @@ public class QQWry {
 				z.setCountry(country.getString());
 				z.setCity(city);
 			}
-		} else if (mode == 0x02) {
-			readMode2(z, idx.getRecordOffset() + 4);
+		} else if (mode == REDIRECT_MODE_2) {
+			readMode2(z, pos);
+		} else {
+			final WryString country = readString(pos);
+			final String city = readCity(pos + country.getLength());
+			z.setCountry(country.getString());
+			z.setCity(city);
 		}
 		return z;
 	}
 
 	private long readLong32(final int offset) {
-		long v = data[offset] & 0xFF;
-		v |= (data[offset + 1] << 8) & 0xFF00;
-		v |= ((data[offset + 2] << 16) & 0xFF0000);
-		v |= ((data[offset + 3] << 24) & 0xFF000000L);
+		long v = data[offset] & 0xFFL;
+		v |= (data[offset + 1] << 8L) & 0xFF00L;
+		v |= ((data[offset + 2] << 16L) & 0xFF0000L);
+		v |= ((data[offset + 3] << 24L) & 0xFF000000L);
 		return v;
 	}
 
@@ -113,7 +120,7 @@ public class QQWry {
 			stringBuf[i] = b;
 		}
 		try {
-			return new WryString(new String(stringBuf, 0, i, "GB18030"), i);
+			return new WryString(new String(stringBuf, 0, i, "GB18030"), i + 1);
 		} catch (final UnsupportedEncodingException e) {
 			return new WryString("", 0);
 		}
@@ -128,11 +135,9 @@ public class QQWry {
 			if ((ip >= idx.getMinIP()) && (ip <= idx.getMaxIP())) {
 				return idx;
 			}
-
 			if ((cur == head) || (cur == tail)) {
 				return idx;
 			}
-
 			if (ip < idx.getMinIP()) {
 				tail = cur;
 			} else if (ip > idx.getMaxIP()) {
@@ -149,10 +154,10 @@ public class QQWry {
 		if (parts.length != 4) {
 			throw new IllegalArgumentException("ip=" + s);
 		}
-		long n = Long.parseLong(parts[0].trim()) << 24L;
-		n += Long.parseLong(parts[1].trim()) << 16L;
-		n += Long.parseLong(parts[2].trim()) << 8L;
-		n += Long.parseLong(parts[3].trim());
+		long n = Long.parseLong(parts[0]) << 24L;
+		n += Long.parseLong(parts[1]) << 16L;
+		n += Long.parseLong(parts[2]) << 8L;
+		n += Long.parseLong(parts[3]);
 		return n;
 	}
 }

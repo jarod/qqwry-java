@@ -11,3 +11,5 @@ usage:
 * copy qqwry.dat to src/main/resources/qqwry.dat before running the tests.
 
 see tests https://github.com/jarod/qqwry-java/tree/master/src/test/java/com/github/jarod/qqwry
+
+[![Build Status](https://drone.io/github.com/jarod/qqwry-java/status.png)](https://drone.io/github.com/jarod/qqwry-java/latest)

@@ -1,24 +1,65 @@
 package com.github.jarod.qqwry;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * Not thread safe. Each instance should only use in one thread.
+ * Thread safe. A QQWry instance can share amount multi threads.
+ *
  * @author Jarod Liu <liuyuanzhi@gmail.com>
  */
 public class QQWry {
 	private static final int INDEX_RECORD_LENGTH = 7;
-	private static final byte STRING_END = '\0';
 	private static final byte REDIRECT_MODE_1 = 0x01;
 	private static final byte REDIRECT_MODE_2 = 0x02;
+	private static final byte STRING_END = '\0';
 
 	private final byte[] data;
 	private final long indexHead;
 	private final long indexTail;
 	private final byte[] stringBuf = new byte[64];
 
+	/**
+	 * Create QQWry Load qqwry.dat from classpath.
+	 * @throws IOException
+	 */
+	public QQWry() throws IOException {
+		final InputStream in = QQWry.class.getClassLoader().getResourceAsStream("qqwry.dat");
+		final ByteArrayOutputStream out = new ByteArrayOutputStream(10 * 1024 * 1024); // 10MB
+		final byte[] buffer = new byte[4096];
+		while (true) {
+			final int r = in.read(buffer);
+			if (r == -1) {
+				break;
+			}
+			out.write(buffer, 0, r);
+		}
+		data = out.toByteArray();
+		indexHead = readLong32(0);
+		indexTail = readLong32(4);
+	}
+
+	/**
+	 * Create QQWry with provided qqwry.dat data.
+	 * @param data fully read data from a qqwry.dat file.
+	 */
 	public QQWry(final byte[] data) {
 		this.data = data;
+		indexHead = readLong32(0);
+		indexTail = readLong32(4);
+	}
+
+	/**
+	 * Create QQWry from a path to file qqwry.dat.
+	 * @param file path to qqwry.dat
+	 * @throws IOException
+	 */
+	public QQWry(final Path file) throws IOException {
+		data = Files.readAllBytes(file);
 		indexHead = readLong32(0);
 		indexTail = readLong32(4);
 	}

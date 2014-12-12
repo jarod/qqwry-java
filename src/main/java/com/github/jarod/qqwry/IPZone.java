@@ -31,9 +31,7 @@ public class IPZone {
 
 	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(country).append(" ").append(city);
-		return builder.toString();
+		return new StringBuilder(country).append(city).toString();
 	}
 
 }

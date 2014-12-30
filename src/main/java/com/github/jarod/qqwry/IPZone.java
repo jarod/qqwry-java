@@ -2,36 +2,36 @@ package com.github.jarod.qqwry;
 
 public class IPZone {
 	private final String ip;
-	private String country = "";
-	private String city = "";
+	private String mainInfo = "";
+	private String subInfo = "";
 
 	public IPZone(final String ip) {
 		this.ip = ip;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public String getCountry() {
-		return country;
 	}
 
 	public String getIp() {
 		return ip;
 	}
 
-	public void setCity(final String city) {
-		this.city = city;
+	public String getMainInfo() {
+		return mainInfo;
 	}
 
-	public void setCountry(final String country) {
-		this.country = country;
+	public String getSubInfo() {
+		return subInfo;
+	}
+
+	public void setMainInfo(final String info) {
+		this.mainInfo = info;
+	}
+
+	public void setSubInfo(final String info) {
+		this.subInfo = info;
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuilder(country).append(city).toString();
+		return new StringBuilder(mainInfo).append(subInfo).toString();
 	}
 
 }

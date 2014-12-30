@@ -10,7 +10,7 @@ import java.nio.file.Path;
 /**
  * Thread safe. A QQWry instance can share amount multi threads.
  *
- * @author Jarod Liu <liuyuanzhi@gmail.com>
+ * @author Jarod Liu &lt;liuyuanzhi@gmail.com&gt;
  */
 public class QQWry {
 	private static final int INDEX_RECORD_LENGTH = 7;
@@ -25,7 +25,7 @@ public class QQWry {
 
 	/**
 	 * Create QQWry Load qqwry.dat from classpath.
-	 * @throws IOException
+	 * @throws IOException if encounter error while reading qqwry.dat
 	 */
 	public QQWry() throws IOException {
 		final InputStream in = QQWry.class.getClassLoader().getResourceAsStream("qqwry.dat");
@@ -56,7 +56,7 @@ public class QQWry {
 	/**
 	 * Create QQWry from a path to file qqwry.dat.
 	 * @param file path to qqwry.dat
-	 * @throws IOException
+	 * @throws IOException if encounter error while reading from the given file.
 	 */
 	public QQWry(final Path file) throws IOException {
 		data = Files.readAllBytes(file);
@@ -82,20 +82,6 @@ public class QQWry {
 		return begin + (records * INDEX_RECORD_LENGTH);
 	}
 
-	private String readCity(final int offset) {
-		final byte b = data[offset];
-		if ((b == REDIRECT_MODE_1) || (b == REDIRECT_MODE_2)) {
-			final int areaOffset = readInt24(offset + 1);
-			if (areaOffset == 0) {
-				return "";
-			} else {
-				return readString(areaOffset).getString();
-			}
-		} else {
-			return readString(offset).getString();
-		}
-	}
-
 	private QIndex readIndex(final int offset) {
 		final long min = readLong32(offset);
 		final int record = readInt24(offset + 4);
@@ -111,7 +97,7 @@ public class QQWry {
 	}
 
 	private IPZone readIP(final String ip, final QIndex idx) {
-		final int pos = idx.getRecordOffset() + 4; // skip ip
+		final int pos = idx.recordOffset + 4; // skip ip
 		final byte mode = data[pos];
 		final IPZone z = new IPZone(ip);
 		if (mode == REDIRECT_MODE_1) {
@@ -119,18 +105,18 @@ public class QQWry {
 			if (data[offset] == REDIRECT_MODE_2) {
 				readMode2(z, offset);
 			} else {
-				final WryString country = readString(offset);
-				final String city = readCity(offset + country.getLength());
-				z.setCountry(country.getString());
-				z.setCity(city);
+				final WryString mainInfo = readString(offset);
+				final String subInfo = readSubInfo(offset + mainInfo.length);
+				z.setMainInfo(mainInfo.string);
+				z.setSubInfo(subInfo);
 			}
 		} else if (mode == REDIRECT_MODE_2) {
 			readMode2(z, pos);
 		} else {
-			final WryString country = readString(pos);
-			final String city = readCity(pos + country.getLength());
-			z.setCountry(country.getString());
-			z.setCity(city);
+			final WryString mainInfo = readString(pos);
+			final String subInfo = readSubInfo(pos + mainInfo.length);
+			z.setMainInfo(mainInfo.string);
+			z.setSubInfo(subInfo);
 		}
 		return z;
 	}
@@ -144,11 +130,11 @@ public class QQWry {
 	}
 
 	private void readMode2(final IPZone z, final int offset) {
-		final int countryOffset = readInt24(offset + 1);
-		final String country = readString(countryOffset).getString();
-		final String city = readCity(offset + 4);
-		z.setCountry(country);
-		z.setCity(city);
+		final int mainInfoOffset = readInt24(offset + 1);
+		final String main = readString(mainInfoOffset).string;
+		final String sub = readSubInfo(offset + 4);
+		z.setMainInfo(main);
+		z.setSubInfo(sub);
 	}
 
 	private WryString readString(final int offset) {
@@ -167,21 +153,35 @@ public class QQWry {
 		}
 	}
 
+	private String readSubInfo(final int offset) {
+		final byte b = data[offset];
+		if ((b == REDIRECT_MODE_1) || (b == REDIRECT_MODE_2)) {
+			final int areaOffset = readInt24(offset + 1);
+			if (areaOffset == 0) {
+				return "";
+			} else {
+				return readString(areaOffset).string;
+			}
+		} else {
+			return readString(offset).string;
+		}
+	}
+
 	private QIndex searchIndex(final long ip) {
 		long head = indexHead;
 		long tail = indexTail;
 		while (tail > head) {
 			final long cur = getMiddleOffset(head, tail);
 			final QIndex idx = readIndex((int) cur);
-			if ((ip >= idx.getMinIP()) && (ip <= idx.getMaxIP())) {
+			if ((ip >= idx.minIP) && (ip <= idx.maxIP)) {
 				return idx;
 			}
 			if ((cur == head) || (cur == tail)) {
 				return idx;
 			}
-			if (ip < idx.getMinIP()) {
+			if (ip < idx.minIP) {
 				tail = cur;
-			} else if (ip > idx.getMaxIP()) {
+			} else if (ip > idx.maxIP) {
 				head = cur;
 			} else {
 				return idx;

@@ -1,12 +1,20 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.7
 group = 'com.github.jarod'
-version = '0.5.0'
+archivesBaseName = 'qqwry-java'
+version = '0.6.0'
+
+jacoco {
+    toolVersion = "0.7.2.201409121644"
+}
 
 repositories {
-  mavenCentral()
+  jcenter()
 }
 
 dependencies {
@@ -15,3 +23,64 @@ dependencies {
    )
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.java
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'qqwry-java'
+        packaging 'jar'
+        description 'A java library to read QQWry IP database.'
+        url 'https://github.com/jarod/qqwry-java'
+
+        scm {
+          connection 'scm:git:https://github.com/jarod/qqwry-java.git'
+          developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
+          url 'https://github.com/jarod/qqwry-java'
+        }
+
+        licenses {
+          license {
+            name 'The MIT License'
+            url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
+          }
+        }
+
+        developers {
+          developer {
+            id 'jarod_liu'
+            name 'Jarod Liu'
+            email 'liuyuanzhi@gmail.com'
+          }
+        }
+      }
+    }
+  }
+}

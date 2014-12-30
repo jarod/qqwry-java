@@ -1,0 +1,6 @@
+signing.keyId=72ABF663
+signing.password=
+signing.secretKeyRingFile=~/.gnupg/secring.gpg
+
+ossrhUsername=jarod_liu
+ossrhPassword=

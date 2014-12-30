@@ -34,7 +34,6 @@ maven:
   <groupId>com.github.jarod</groupId>
   <artifactId>qqwry-java</artifactId>
   <version>0.6.0</version>
-  <type>pom</type>
 </dependency>
 ```
 

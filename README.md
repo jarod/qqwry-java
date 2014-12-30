@@ -1,8 +1,8 @@
-## qqwry-java
+# qqwry-java
 
 [![Build Status](https://drone.io/github.com/jarod/qqwry-java/status.png)](https://drone.io/github.com/jarod/qqwry-java/latest)
 
-#### usage:
+### usage:
 
 Code sample:
 ```java
@@ -37,7 +37,7 @@ maven:
 </dependency>
 ```
 
-#### build:
+### build:
 
 ```
 # OPTIONAL To embed qqwry.dat in the jar file, copy qqwry.dat to src/main/resources/qqwry.dat

@@ -40,4 +40,14 @@ public class QQWryTest {
 		assertEquals("广东省广州市", zone.getMainInfo());
 		assertEquals("电信", zone.getSubInfo());
 	}
+
+	/**
+	 * https://github.com/jarod/qqwry-java/issues/3
+	 */
+	@Test
+	public void testIssue3() {
+		final IPZone zone = qqwry.findIP("1.25.36.67");
+		assertEquals("内蒙古", zone.getMainInfo());
+		assertEquals("美国苹果公司[在美国Akamai科技公司(在北京蓝汛通信技术有限公司在呼和浩特联通IDC机房)]的HTTPSCDN节点", zone.getSubInfo());
+	}
 }

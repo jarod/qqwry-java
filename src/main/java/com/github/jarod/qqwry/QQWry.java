@@ -21,7 +21,6 @@ public class QQWry {
 	private final byte[] data;
 	private final long indexHead;
 	private final long indexTail;
-	private final byte[] stringBuf = new byte[64];
 
 	/**
 	 * Create QQWry Load qqwry.dat from classpath.
@@ -139,15 +138,16 @@ public class QQWry {
 
 	private WryString readString(final int offset) {
 		int i = 0;
+		byte[] buf = new byte[128];
 		for (;; i++) {
 			final byte b = data[offset + i];
 			if (STRING_END == b) {
 				break;
 			}
-			stringBuf[i] = b;
+			buf[i] = b;
 		}
 		try {
-			return new WryString(new String(stringBuf, 0, i, "GB18030"), i + 1);
+			return new WryString(new String(buf, 0, i, "GB18030"), i + 1);
 		} catch (final UnsupportedEncodingException e) {
 			return new WryString("", 0);
 		}

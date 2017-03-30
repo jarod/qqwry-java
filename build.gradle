@@ -4,13 +4,13 @@ apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.6.2'
+version = '0.6.3-SNAPSHOT'
 
 jacoco {
-    toolVersion = "0.7.6.201602180812"
+    toolVersion = "0.7.9"
 }
 
 repositories {

@@ -58,9 +58,7 @@ public class QQWry {
 	 * @throws IOException if encounter error while reading from the given file.
 	 */
 	public QQWry(final Path file) throws IOException {
-		data = Files.readAllBytes(file);
-		indexHead = readLong32(0);
-		indexTail = readLong32(4);
+		this(Files.readAllBytes(file));
 	}
 
 	public IPZone findIP(final String ip) {

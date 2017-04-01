@@ -1,0 +1,12 @@
+dist: trusty
+language: java
+jdk:
+  - openjdk8
+install:
+  - mkdir -p src/main/resources
+  - curl -L -o src/main/resources/qqwry.dat https://www.dropbox.com/s/r30ban6c6whzcwv/qqwry.dat?dl=1
+script: 
+  - ./gradlew test
+cache:
+  directories:
+  - $HOME/.gradle

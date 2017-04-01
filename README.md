@@ -1,6 +1,6 @@
 # qqwry-java
 
-[![Build Status](https://drone.io/github.com/jarod/qqwry-java/status.png)](https://drone.io/github.com/jarod/qqwry-java/latest)
+[![Build Status](https://api.travis-ci.org/jarod/qqwry-java.svg?branch=master)](https://travis-ci.org/jarod/qqwry-java)
 
 ### usage:
 

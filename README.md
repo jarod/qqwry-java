@@ -25,7 +25,7 @@ Gradle:
 ```groovy
 dependencies {
    compile(
-     "com.github.jarod:qqwry-java:0.6.3",
+     "com.github.jarod:qqwry-java:0.7.0",
    )
 }
 ```
@@ -35,7 +35,7 @@ Maven:
 <dependency>
   <groupId>com.github.jarod</groupId>
   <artifactId>qqwry-java</artifactId>
-  <version>0.6.3</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 

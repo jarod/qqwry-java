@@ -8,11 +8,52 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Thread safe. A QQWry instance can share amount multi threads.
+ * Thread safe. A QQWry instance can share amount threads.
+ *
+ * <pre>
+ * Usage:
+ * {@code
+ * QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
+ *
+ * QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
+ *
+ * byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
+ * QQWry qqwry = new QQWry(data); // create QQWry with provided data
+ *
+ * String myIP = "127.0.0.1";
+ * IPZone ipzone = qqwry.findIP(myIP);
+ * System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
+ * // IANA, 保留地址用于本地回送
+ * }
+ * </pre>
  *
  * @author Jarod Liu &lt;liuyuanzhi@gmail.com&gt;
  */
 public class QQWry {
+
+	private static class QIndex {
+		public final long minIP;
+		public final long maxIP;
+		public final int recordOffset;
+
+		public QIndex(final long minIP, final long maxIP, final int recordOffset) {
+			this.minIP = minIP;
+			this.maxIP = maxIP;
+			this.recordOffset = recordOffset;
+		}
+	}
+
+	private static class QString {
+		public final String string;
+		/** length including the \0 end byte */
+		public final int length;
+
+		public QString(final String string, final int length) {
+			this.string = string;
+			this.length = length;
+		}
+	}
+
 	private static final int INDEX_RECORD_LENGTH = 7;
 	private static final byte REDIRECT_MODE_1 = 0x01;
 	private static final byte REDIRECT_MODE_2 = 0x02;
@@ -23,8 +64,10 @@ public class QQWry {
 	private final long indexTail;
 
 	/**
-	 * Create QQWry Load qqwry.dat from classpath.
-	 * @throws IOException if encounter error while reading qqwry.dat
+	 * Create QQWry by loading qqwry.dat from classpath.
+	 *
+	 * @throws IOException
+	 *             if encounter error while reading qqwry.dat
 	 */
 	public QQWry() throws IOException {
 		final InputStream in = QQWry.class.getClassLoader().getResourceAsStream("qqwry.dat");
@@ -44,7 +87,9 @@ public class QQWry {
 
 	/**
 	 * Create QQWry with provided qqwry.dat data.
-	 * @param data fully read data from a qqwry.dat file.
+	 *
+	 * @param data
+	 *            fully read data from a qqwry.dat file.
 	 */
 	public QQWry(final byte[] data) {
 		this.data = data;
@@ -53,9 +98,12 @@ public class QQWry {
 	}
 
 	/**
-	 * Create QQWry from a path to file qqwry.dat.
-	 * @param file path to qqwry.dat
-	 * @throws IOException if encounter error while reading from the given file.
+	 * Create QQWry from a path to qqwry.dat file.
+	 *
+	 * @param file
+	 *            path to qqwry.dat
+	 * @throws IOException
+	 *             if encounter error while reading from the given file.
 	 */
 	public QQWry(final Path file) throws IOException {
 		this(Files.readAllBytes(file));
@@ -102,7 +150,7 @@ public class QQWry {
 			if (data[offset] == REDIRECT_MODE_2) {
 				readMode2(z, offset);
 			} else {
-				final WryString mainInfo = readString(offset);
+				final QString mainInfo = readString(offset);
 				final String subInfo = readSubInfo(offset + mainInfo.length);
 				z.setMainInfo(mainInfo.string);
 				z.setSubInfo(subInfo);
@@ -110,7 +158,7 @@ public class QQWry {
 		} else if (mode == REDIRECT_MODE_2) {
 			readMode2(z, pos);
 		} else {
-			final WryString mainInfo = readString(pos);
+			final QString mainInfo = readString(pos);
 			final String subInfo = readSubInfo(pos + mainInfo.length);
 			z.setMainInfo(mainInfo.string);
 			z.setSubInfo(subInfo);
@@ -134,9 +182,9 @@ public class QQWry {
 		z.setSubInfo(sub);
 	}
 
-	private WryString readString(final int offset) {
+	private QString readString(final int offset) {
 		int i = 0;
-		byte[] buf = new byte[128];
+		final byte[] buf = new byte[128];
 		for (;; i++) {
 			final byte b = data[offset + i];
 			if (STRING_END == b) {
@@ -145,9 +193,9 @@ public class QQWry {
 			buf[i] = b;
 		}
 		try {
-			return new WryString(new String(buf, 0, i, "GB18030"), i + 1);
+			return new QString(new String(buf, 0, i, "GB18030"), i + 1);
 		} catch (final UnsupportedEncodingException e) {
-			return new WryString("", 0);
+			return new QString("", 0);
 		}
 	}
 

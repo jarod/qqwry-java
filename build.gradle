@@ -3,8 +3,8 @@ buildscript {
         jcenter()
     }
     ext {
-        junitPlatformVersion = '1.0.+'
-        junitJupiterVersion = '5.0.+'
+        junitPlatformVersion = '1.0.2'
+        junitJupiterVersion = '5.0.2'
     }
     dependencies {
         classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"

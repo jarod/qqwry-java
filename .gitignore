@@ -5,3 +5,5 @@
 bin/
 qqwry.dat
 build/
+.idea/
+*.iml

@@ -1,14 +1,14 @@
 package com.github.jarod.qqwry;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QQWryTest {
 	private static QQWry qqwry;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 		qqwry = new QQWry();
 	}

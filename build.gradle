@@ -1,26 +1,46 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    ext {
+        junitPlatformVersion = '1.0.+'
+        junitJupiterVersion = '5.0.+'
+    }
+    dependencies {
+        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.7.0'
+version = '0.7.1'
 
 jacoco {
     toolVersion = "0.7.9"
 }
 
 repositories {
-  jcenter()
+    jcenter()
 }
-
 dependencies {
-   testCompile(
-     "junit:junit:4.12",
-   )
+    testCompileOnly(
+            "org.apiguardian:apiguardian-api:${junitPlatformVersion}"
+    )
+    testCompile(
+            "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+    )
+    testRuntime(
+            "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
+            "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
+    )
 }
 
 task javadocJar(type: Jar) {
@@ -42,45 +62,45 @@ signing {
 }
 
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-      repository(url: repoReleaseUrl) {
-        authentication(userName: repoUsername, password: repoPassword)
-      }
+            repository(url: repoReleaseUrl) {
+                authentication(userName: repoUsername, password: repoPassword)
+            }
 
-      snapshotRepository(url: repoSnapshotUrl) {
-        authentication(userName: repoUsername, password: repoPassword)
-      }
+            snapshotRepository(url: repoSnapshotUrl) {
+                authentication(userName: repoUsername, password: repoPassword)
+            }
 
-      pom.project {
-        name 'qqwry-java'
-        packaging 'jar'
-        description 'A java library to read QQWry IP database.'
-        url 'https://github.com/jarod/qqwry-java'
+            pom.project {
+                name 'qqwry-java'
+                packaging 'jar'
+                description 'A java library to read QQWry IP database.'
+                url 'https://github.com/jarod/qqwry-java'
 
-        scm {
-          connection 'scm:git:https://github.com/jarod/qqwry-java.git'
-          developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
-          url 'https://github.com/jarod/qqwry-java'
+                scm {
+                    connection 'scm:git:https://github.com/jarod/qqwry-java.git'
+                    developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
+                    url 'https://github.com/jarod/qqwry-java'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'jarod_liu'
+                        name 'Jarod Liu'
+                        email 'liuyuanzhi@gmail.com'
+                    }
+                }
+            }
         }
-
-        licenses {
-          license {
-            name 'The MIT License'
-            url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
-          }
-        }
-
-        developers {
-          developer {
-            id 'jarod_liu'
-            name 'Jarod Liu'
-            email 'liuyuanzhi@gmail.com'
-          }
-        }
-      }
     }
-  }
 }

@@ -32,7 +32,7 @@ repositories {
 }
 dependencies {
     testCompileOnly(
-            "org.apiguardian:apiguardian-api:${junitPlatformVersion}"
+            "org.apiguardian:apiguardian-api:1.0.0"
     )
     testCompile(
             "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",

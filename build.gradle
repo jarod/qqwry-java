@@ -3,44 +3,41 @@ buildscript {
         jcenter()
     }
     ext {
-        junitPlatformVersion = '1.0.2'
-        junitJupiterVersion = '5.0.2'
-    }
-    dependencies {
-        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"
+        junitJupiterVersion = '5.3.2'
     }
 }
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.7.1'
+version = '0.7.2'
 
 jacoco {
-    toolVersion = "0.7.9"
+    toolVersion = "0.8.2"
 }
 
 repositories {
     jcenter()
 }
 dependencies {
-    testCompileOnly(
-            "org.apiguardian:apiguardian-api:1.0.0"
-    )
-    testCompile(
+    testImplementation(
             "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
     )
     testRuntime(
             "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
-            "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}",
     )
+}
+
+test {
+    useJUnitPlatform {
+        excludeTags 'slow'
+    }
 }
 
 task javadocJar(type: Jar) {

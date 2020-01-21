@@ -3,12 +3,11 @@ buildscript {
         jcenter()
     }
     ext {
-        junitJupiterVersion = '5.3.2'
+        junitJupiterVersion = '5.5.2'
     }
 }
 
 apply plugin: 'java-library'
-apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -16,10 +15,10 @@ apply plugin: 'signing'
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.7.2'
+version = '0.7.3'
 
 jacoco {
-    toolVersion = "0.8.2"
+    toolVersion = "0.8.5"
 }
 
 repositories {

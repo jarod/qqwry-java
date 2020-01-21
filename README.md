@@ -24,7 +24,7 @@ System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
 Gradle:
 ```groovy
 dependencies {
-   compile(
+   api (
      "com.github.jarod:qqwry-java:0.7.+",
    )
 }

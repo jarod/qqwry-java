@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QQWryTest {
 	private static QQWry qqwry;
@@ -39,6 +40,15 @@ public class QQWryTest {
 		final IPZone zone = qqwry.findIP("113.64.230.49");
 		assertEquals("广东省河源市", zone.getMainInfo());
 		assertEquals("电信", zone.getSubInfo());
+	}
+
+	@Test
+	public void testParseDatabaseVersion() {
+		String dbVer = qqwry.parseDatabaseVersion();
+		System.out.println("qqwry.dat version=" + dbVer);
+		assertTrue(dbVer != null && !dbVer.isEmpty());
+		String[] parts = dbVer.split("\\.");
+		assertEquals(3, parts.length);
 	}
 
 	/**

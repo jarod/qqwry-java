@@ -6,31 +6,32 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Thread safe. A QQWry instance can share amount threads.
  *
  * <pre>
- * Usage:
- * {@code
- * QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
+ * Usage: {
+ * 	&#64;code
+ * 	QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
  *
- * QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
+ * 	QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
  *
- * byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
- * QQWry qqwry = new QQWry(data); // create QQWry with provided data
+ * 	byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
+ * 	QQWry qqwry = new QQWry(data); // create QQWry with provided data
  *
- * String myIP = "127.0.0.1";
- * IPZone ipzone = qqwry.findIP(myIP);
- * System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
- * // IANA, 保留地址用于本地回送
+ * 	String myIP = "127.0.0.1";
+ * 	IPZone ipzone = qqwry.findIP(myIP);
+ * 	System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
+ * 	// IANA, 保留地址用于本地回送
  * }
  * </pre>
  *
  * @author Jarod Liu &lt;liuyuanzhi@gmail.com&gt;
  */
 public class QQWry {
-
 	private static class QIndex {
 		public final long minIP;
 		public final long maxIP;
@@ -62,12 +63,12 @@ public class QQWry {
 	private final byte[] data;
 	private final long indexHead;
 	private final long indexTail;
+	private final String databaseVersion;
 
 	/**
 	 * Create QQWry by loading qqwry.dat from classpath.
 	 *
-	 * @throws IOException
-	 *             if encounter error while reading qqwry.dat
+	 * @throws IOException if encounter error while reading qqwry.dat
 	 */
 	public QQWry() throws IOException {
 		final InputStream in = QQWry.class.getClassLoader().getResourceAsStream("qqwry.dat");
@@ -83,27 +84,26 @@ public class QQWry {
 		data = out.toByteArray();
 		indexHead = readLong32(0);
 		indexTail = readLong32(4);
+		databaseVersion = parseDatabaseVersion();
 	}
 
 	/**
 	 * Create QQWry with provided qqwry.dat data.
 	 *
-	 * @param data
-	 *            fully read data from a qqwry.dat file.
+	 * @param data fully read data from a qqwry.dat file.
 	 */
 	public QQWry(final byte[] data) {
 		this.data = data;
 		indexHead = readLong32(0);
 		indexTail = readLong32(4);
+		databaseVersion = parseDatabaseVersion();
 	}
 
 	/**
 	 * Create QQWry from a path to qqwry.dat file.
 	 *
-	 * @param file
-	 *            path to qqwry.dat
-	 * @throws IOException
-	 *             if encounter error while reading from the given file.
+	 * @param file path to qqwry.dat
+	 * @throws IOException if encounter error while reading from the given file.
 	 */
 	public QQWry(final Path file) throws IOException {
 		this(Files.readAllBytes(file));
@@ -246,5 +246,19 @@ public class QQWry {
 		n += Long.parseLong(parts[2]) << 8L;
 		n += Long.parseLong(parts[3]);
 		return n;
+	}
+
+	public String getDatabaseVersion() {
+		return databaseVersion;
+	}
+
+	String parseDatabaseVersion() {
+		Pattern dbVerPattern = Pattern.compile("(\\d+)年(\\d+)月(\\d+)日.*");
+		IPZone ipz = findIP("255.255.255.255");
+		Matcher m = dbVerPattern.matcher(ipz.getSubInfo());
+		if (!m.matches() || m.groupCount() != 3) {
+			return "0.0.0";
+		}
+		return String.format("%s.%s.%s", m.group(1), m.group(2), m.group(3));
 	}
 }

@@ -1,7 +1,7 @@
 # qqwry-java
 
 [![Build Status](https://api.travis-ci.org/jarod/qqwry-java.svg?branch=master)](https://travis-ci.org/jarod/qqwry-java)
-[![Javadocs](http://www.javadoc.io/badge/com.github.jarod/qqwry-java.svg)](http://www.javadoc.io/doc/com.github.jarod/qqwry-java/0.7.1)
+[![Javadocs](http://www.javadoc.io/badge/com.github.jarod/qqwry-java.svg)](http://www.javadoc.io/doc/com.github.jarod/qqwry-java/0.8.0)
 
 
 ### usage:
@@ -15,6 +15,9 @@ QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from 
 byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
 QQWry qqwry = new QQWry(data); // create QQWry with provided data
 
+String dbVer = qqwry.getDatabaseVersion();
+System.out.printf("qqwry.dat version=%s", dbVer);
+
 String myIP = "127.0.0.1";
 IPZone ipzone = qqwry.findIP(myIP);
 System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
@@ -25,7 +28,7 @@ Gradle:
 ```groovy
 dependencies {
    api (
-     "com.github.jarod:qqwry-java:0.7.+",
+     "com.github.jarod:qqwry-java:0.8.+",
    )
 }
 ```
@@ -35,7 +38,7 @@ Maven:
 <dependency>
   <groupId>com.github.jarod</groupId>
   <artifactId>qqwry-java</artifactId>
-  <version>0.7.0</version>
+  <version>0.8.0</version>
 </dependency>
 ```
 

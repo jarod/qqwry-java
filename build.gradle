@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     ext {
-        junitJupiterVersion = '5.5.2'
+        junitJupiterVersion = '5.6.2'
     }
 }
 
@@ -15,7 +15,7 @@ apply plugin: 'signing'
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.7.3'
+version = '0.8.0'
 
 jacoco {
     toolVersion = "0.8.5"

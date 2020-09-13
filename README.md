@@ -17,6 +17,7 @@ QQWry qqwry = new QQWry(data); // create QQWry with provided data
 
 String dbVer = qqwry.getDatabaseVersion();
 System.out.printf("qqwry.dat version=%s", dbVer);
+// qqwry.dat version=2020.9.10
 
 String myIP = "127.0.0.1";
 IPZone ipzone = qqwry.findIP(myIP);

@@ -13,14 +13,17 @@ import java.util.regex.Pattern;
  * Thread safe. A QQWry instance can share amount threads.
  *
  * <pre>
- * Usage: {
- * 	&#64;code
+ * Usage: {@code
  * 	QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
  *
  * 	QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
  *
  * 	byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
  * 	QQWry qqwry = new QQWry(data); // create QQWry with provided data
+ * 
+ * 	String dbVer = qqwry.getDatabaseVersion();
+ * 	System.out.printf("qqwry.dat version=%s", dbVer);
+ * 	// qqwry.dat version=2020.9.10
  *
  * 	String myIP = "127.0.0.1";
  * 	IPZone ipzone = qqwry.findIP(myIP);
@@ -248,6 +251,9 @@ public class QQWry {
 		return n;
 	}
 
+	/**
+	 * qqwry database version in pattern x.x.x
+	 */
 	public String getDatabaseVersion() {
 		return databaseVersion;
 	}

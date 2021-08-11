@@ -4,6 +4,12 @@ plugins {
     id 'maven-publish'
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
@@ -24,6 +30,9 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
     testImplementation platform('org.junit:junit-bom:5.7.2')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
 }
@@ -43,7 +52,7 @@ test {
 }
 
 java {
-    withJavadocJar()
+//    withJavadocJar()
     withSourcesJar()
 }
 

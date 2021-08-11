@@ -1,37 +1,13 @@
 package com.github.jarod.qqwry;
 
+import lombok.*;
+
+@ToString
+@RequiredArgsConstructor
 public class IPZone {
-	private final String ip;
-	private String mainInfo = "";
-	private String subInfo = "";
+  @Getter @NonNull private final String ip;
 
-	public IPZone(final String ip) {
-		this.ip = ip;
-	}
+  @Getter @Setter private String mainInfo = "";
 
-	public String getIp() {
-		return ip;
-	}
-
-	public String getMainInfo() {
-		return mainInfo;
-	}
-
-	public String getSubInfo() {
-		return subInfo;
-	}
-
-	public void setMainInfo(final String info) {
-		this.mainInfo = info;
-	}
-
-	public void setSubInfo(final String info) {
-		this.subInfo = info;
-	}
-
-	@Override
-	public String toString() {
-		return new StringBuilder(mainInfo).append(subInfo).toString();
-	}
-
+  @Getter @Setter private String subInfo = "";
 }

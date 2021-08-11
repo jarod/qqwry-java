@@ -1,36 +1,39 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    ext {
-        junitJupiterVersion = '5.6.2'
-    }
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
 }
 
-apply plugin: 'java-library'
-apply plugin: 'jacoco'
-apply plugin: 'maven'
-apply plugin: 'signing'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
-sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
 version = '0.8.0'
 
-jacoco {
-    toolVersion = "0.8.5"
+repositories {
+    maven {
+        url 'https://maven.aliyun.com/repository/spring/'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/spring-plugin/'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/public/'
+    }
 }
 
-repositories {
-    jcenter()
-}
 dependencies {
-    testImplementation(
-            "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
-    )
-    testRuntime(
-            "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}",
-    )
+    testImplementation platform('org.junit:junit-bom:5.7.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Test) {
+    systemProperty "file.encoding", "UTF-8"
 }
 
 test {
@@ -39,64 +42,40 @@ test {
     }
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.java
-}
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            pom {
+//                name 'qqwry-java'
+//                packaging 'jar'
+//                description 'A java library to read QQWry IP database.'
+//                url 'https://github.com/jarod/qqwry-java'
+//
+//                scm {
+//                    connection 'scm:git:https://github.com/jarod/qqwry-java.git'
+//                    developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
+//                    url 'https://github.com/jarod/qqwry-java'
+//                }
+//
+//                licenses {
+//                    license {
+//                        name 'The MIT License'
+//                        url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
+//                    }
+//                }
+//                developer {
+//                    id 'jarod_liu'
+//                    name 'Jarod Liu'
+//                    email 'liuyuanzhi@gmail.com'
+//                }
+//            }
+//        }
+//    }
+//}
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: repoReleaseUrl) {
-                authentication(userName: repoUsername, password: repoPassword)
-            }
-
-            snapshotRepository(url: repoSnapshotUrl) {
-                authentication(userName: repoUsername, password: repoPassword)
-            }
-
-            pom.project {
-                name 'qqwry-java'
-                packaging 'jar'
-                description 'A java library to read QQWry IP database.'
-                url 'https://github.com/jarod/qqwry-java'
-
-                scm {
-                    connection 'scm:git:https://github.com/jarod/qqwry-java.git'
-                    developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
-                    url 'https://github.com/jarod/qqwry-java'
-                }
-
-                licenses {
-                    license {
-                        name 'The MIT License'
-                        url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'jarod_liu'
-                        name 'Jarod Liu'
-                        email 'liuyuanzhi@gmail.com'
-                    }
-                }
-            }
-        }
-    }
-}
+defaultTasks 'build'

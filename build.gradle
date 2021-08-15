@@ -1,21 +1,15 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    ext {
-        junitJupiterVersion = '5.7.2'
-    }
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'signing'
 }
-
-apply plugin: 'java-library'
-apply plugin: 'jacoco'
-apply plugin: 'maven'
-apply plugin: 'signing'
 
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.9.0'
+version = '0.10.0-SNAPSHOT'
+
 
 jacoco {
     toolVersion = "0.8.7"
@@ -24,7 +18,10 @@ jacoco {
 repositories {
     mavenCentral()
 }
+
 dependencies {
+    def junitJupiterVersion = '5.7.2'
+
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
     )
@@ -39,64 +36,63 @@ test {
     }
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
     from sourceSets.main.java
+    classifier = 'sources'
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-signing {
-    sign configurations.archives
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: repoReleaseUrl) {
-                authentication(userName: repoUsername, password: repoPassword)
-            }
-
-            snapshotRepository(url: repoSnapshotUrl) {
-                authentication(userName: repoUsername, password: repoPassword)
-            }
-
-            pom.project {
-                name 'qqwry-java'
-                packaging 'jar'
-                description 'A java library to read QQWry IP database.'
-                url 'https://github.com/jarod/qqwry-java'
-
-                scm {
-                    connection 'scm:git:https://github.com/jarod/qqwry-java.git'
-                    developerConnection 'scm:git:git@github.com:jarod/qqwry-java.git'
-                    url 'https://github.com/jarod/qqwry-java'
-                }
-
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            pom {
+                name = 'qqwry-java'
+                description = 'A java library to read QQWry IP database.'
+                url = 'https://github.com/jarod/qqwry-java'
                 licenses {
                     license {
-                        name 'The MIT License'
-                        url 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
+                        name = 'The MIT License'
+                        url = 'https://github.com/jarod/qqwry-java/blob/master/LICENSE'
                     }
                 }
-
                 developers {
                     developer {
-                        id 'jarod_liu'
-                        name 'Jarod Liu'
-                        email 'liuyuanzhi@gmail.com'
+                        id = 'jarod_liu'
+                        name = 'Jarod Liu'
+                        email = 'liuyuanzhi@gmail.com'
                     }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/jarod/qqwry-java.git'
+                    developerConnection = 'scm:git:git@github.com:jarod/qqwry-java.git'
+                    url = 'https://github.com/jarod/qqwry-java'
                 }
             }
         }
     }
+
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? repoSnapshotUrl : repoReleaseUrl
+            credentials {
+                username = repoUsername
+                password = repoPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }

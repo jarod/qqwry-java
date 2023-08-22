@@ -14,21 +14,21 @@ import java.util.regex.Pattern;
  *
  * <pre>
  * Usage: {@code
- * 	QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
+ * QQWry qqwry = new QQWry(); // load qqwry.dat from classpath
  *
- * 	QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
+ * QQWry qqwry = new QQWry(Paths.get("path/to/qqwry.dat")); // load qqwry.dat from java.nio.file.Path
  *
- * 	byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
- * 	QQWry qqwry = new QQWry(data); // create QQWry with provided data
+ * byte[] data = Files.readAllBytes(Paths.get("path/to/qqwry.dat"));
+ * QQWry qqwry = new QQWry(data); // create QQWry with provided data
  * 
- * 	String dbVer = qqwry.getDatabaseVersion();
- * 	System.out.printf("qqwry.dat version=%s", dbVer);
- * 	// qqwry.dat version=2020.9.10
+ * String dbVer = qqwry.getDatabaseVersion();
+ * System.out.printf("qqwry.dat version=%s", dbVer);
+ * // qqwry.dat version=2020.9.10
  *
- * 	String myIP = "127.0.0.1";
- * 	IPZone ipzone = qqwry.findIP(myIP);
- * 	System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
- * 	// IANA, 保留地址用于本地回送
+ * String myIP = "127.0.0.1";
+ * IPZone ipzone = qqwry.findIP(myIP);
+ * System.out.printf("%s, %s", ipzone.getMainInfo(), ipzone.getSubInfo());
+ * // IANA, 保留地址用于本地回送
  * }
  * </pre>
  *
@@ -76,7 +76,7 @@ public class QQWry {
 	public QQWry() throws IOException {
 		final InputStream in = QQWry.class.getClassLoader().getResourceAsStream("qqwry.dat");
 		final ByteArrayOutputStream out = new ByteArrayOutputStream(10 * 1024 * 1024); // 10MB
-		final byte[] buffer = new byte[4096];
+		final byte[] buffer = new byte[8192];
 		while (true) {
 			final int r = in.read(buffer);
 			if (r == -1) {
@@ -187,16 +187,15 @@ public class QQWry {
 
 	private QString readString(final int offset) {
 		int i = 0;
-		final byte[] buf = new byte[128];
+
 		for (;; i++) {
 			final byte b = data[offset + i];
 			if (STRING_END == b) {
 				break;
 			}
-			buf[i] = b;
 		}
 		try {
-			return new QString(new String(buf, 0, i, "GB18030"), i + 1);
+			return new QString(new String(data, offset, i, "GB18030"), i + 1);
 		} catch (final UnsupportedEncodingException e) {
 			return new QString("", 0);
 		}

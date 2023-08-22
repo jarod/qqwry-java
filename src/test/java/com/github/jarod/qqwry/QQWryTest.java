@@ -56,8 +56,12 @@ public class QQWryTest {
 	 */
 	@Test
 	public void testIssue3() {
-		final IPZone zone = qqwry.findIP("1.179.249.1");
-		assertEquals("泰国", zone.getMainInfo());
-		assertEquals("曼谷Google缓存服务器(泰国电信公共有限公司-泰国电讯公司TOT)", zone.getSubInfo());
+		IPZone zone = qqwry.findIP("1.179.249.1");
+		assertEquals("泰国曼谷", zone.getMainInfo());
+		assertEquals("Google缓存服务器(泰国电信公共有限公司-泰国电讯公司TOT)", zone.getSubInfo());
+
+		zone = qqwry.findIP("195.123.2.193");
+		assertEquals("乌克兰", zone.getMainInfo());
+		assertEquals("Center for Privatization and Economic Reform in Agriculture;Collaborative Project of Iowa State University;Institute of Agrarian Economics", zone.getSubInfo());
 	}
 }

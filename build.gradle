@@ -12,7 +12,7 @@ version = '0.10.0-SNAPSHOT'
 
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.10"
 }
 
 repositories {
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    def junitJupiterVersion = '5.7.2'
+    def junitJupiterVersion = '5.9.3'
 
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",

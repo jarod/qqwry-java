@@ -1,7 +1,7 @@
 # qqwry-java
 
-[![Build Status](https://api.travis-ci.org/jarod/qqwry-java.svg?branch=master)](https://travis-ci.org/jarod/qqwry-java)
-[![Javadocs](http://www.javadoc.io/badge/com.github.jarod/qqwry-java.svg)](http://www.javadoc.io/doc/com.github.jarod/qqwry-java/0.9.0)
+[![Build Status](https://travis-ci.com/jarod/qqwry-java.svg?branch=master)](https://travis-ci.com/jarod/qqwry-java)
+[![Javadocs](http://www.javadoc.io/badge/com.github.jarod/qqwry-java.svg)](http://www.javadoc.io/doc/com.github.jarod/qqwry-java/0.10.0)
 
 
 ### usage:
@@ -29,7 +29,7 @@ Gradle:
 ```groovy
 dependencies {
    api (
-     "com.github.jarod:qqwry-java:0.9.+",
+     "com.github.jarod:qqwry-java:0.10.+",
    )
 }
 ```
@@ -39,7 +39,7 @@ Maven:
 <dependency>
   <groupId>com.github.jarod</groupId>
   <artifactId>qqwry-java</artifactId>
-  <version>0.9.0</version>
+  <version>0.10.0</version>
 </dependency>
 ```
 

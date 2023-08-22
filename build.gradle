@@ -8,7 +8,7 @@ plugins {
 sourceCompatibility = 1.8
 group = 'com.github.jarod'
 archivesBaseName = 'qqwry-java'
-version = '0.10.0-SNAPSHOT'
+version = '0.10.0'
 
 
 jacoco {

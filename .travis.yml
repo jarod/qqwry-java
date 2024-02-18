@@ -3,7 +3,7 @@ jdk:
   - openjdk8
 install:
   - mkdir -p src/main/resources
-  - curl -L -o src/main/resources/qqwry.dat https://github.com/out0fmemory/qqwry.dat/raw/master/qqwry_lastest.dat 
+  - curl -L -o src/main/resources/qqwry.dat https://github.com/metowolf/qqwry.dat/releases/latest/download/qqwry.dat
 script: 
   - ./gradlew check
 cache:
